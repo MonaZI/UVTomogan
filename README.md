@@ -8,7 +8,7 @@ by Mona Zehni, Zhizhen Zhao
 
 ## Prerequisites
 - Astra toolbox (https://www.astra-toolbox.com/)
-- Pytorch, Numpy, Matplotlib
+- Pytorch, Numpy, Matplotlib, pyyaml
 
 ## More Information
 If you find this epositry helpful in your publications, please consider citing our paper:

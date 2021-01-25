@@ -10,3 +10,8 @@ by Mona Zehni, Zhizhen Zhao
 - Astra toolbox (https://www.astra-toolbox.com/)
 - Pytorch, Numpy, Matplotlib
 
+## More Information
+If you find this epositry helpful in your publications, please consider citing our paper:
+
+If you have any questions, please contact Mona Zehni (mzehni2@illinois.edu).
+

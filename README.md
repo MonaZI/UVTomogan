@@ -11,7 +11,6 @@ by Mona Zehni, Zhizhen Zhao
 - Pytorch, Numpy, Matplotlib, pyyaml
 
 ## More Information
-If you find this epositry helpful in your publications, please consider citing our paper:
+If you find this repositry helpful in your publications, please consider citing our paper:
 
 If you have any questions, please contact Mona Zehni (mzehni2@illinois.edu).
-

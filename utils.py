@@ -1,16 +1,25 @@
 import yaml
+import random
 import numpy as np
 
 import torch
+import torch.backends.cudnn as cudnn
 
+def random_seed(seed):
+    """
+    Fixes the random seed across all random generators
+    :param seed: the seed
+    :return: nothing is returned
+    """
+    cudnn.benchmark = False
+    cudnn.deterministic = True
+    torch.backends.cudnn.deterministic = True
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)
 
-def repopulate_p(p, angle_disc):
-    p_new = torch.zeros(angle_disc,)
-    if p.is_cuda:
-        p_new = p_new.cuda()
-    p_new[0:angle_disc:2] = p
-    p_new[1:angle_disc:2] = p
-    return p_new
 
 def tv_loss_pdf(x):
     reg_loss = torch.sum(torch.abs(x[:-1]-x[1:]))

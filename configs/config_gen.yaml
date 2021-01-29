@@ -2,4 +2,5 @@ iter_log: 500
 debug: False
 gpu: 0
 log_path: './log'
+result_path: './results'
 model_save: './models'

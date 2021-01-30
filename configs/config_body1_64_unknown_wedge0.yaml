@@ -1,12 +1,12 @@
 # dataset
-image_file: 'body1'
+image_file: 'body'
 dl_scale: 4
 num_meas: 20000
 angle_disc: 120
 pdf: 'nonuniform'
 fixed_pdf: False
 batch_size: 50 #50
-snr: 0 #0
+snr: 'inf' #0
 pixel_size: 0.08
 pdf_known: False
 a_size: 5 #4
@@ -63,4 +63,4 @@ angle_disc_vec:
     - 200
 
 seed: 0
-exp_name: 'exp_body1_64_unknown_wedge0_snr0_a5_seed0_lowtv' #'exp_body1_64_known_wedge0_sigma0'
+exp_name: 'exp_body1_64_unknown_wedge0_snr0_a5_seed0_lowtv_test' #'exp_body1_64_known_wedge0_sigma0'

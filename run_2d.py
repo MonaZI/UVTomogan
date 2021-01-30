@@ -23,7 +23,7 @@ def arg_parse():
     parser.add_argument('-config_gen', type=str, default='./configs/config_gen.yaml', help='the general configuration')
     parser.add_argument('-config_exp', type=str, default='./configs/config_exp.yaml', help='the exp configuration')
     args = parser.parse_args()
-    return argss
+    return args
 
 
 def main(args):

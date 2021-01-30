@@ -4,11 +4,10 @@ import astra
 import numpy as np
 
 
-def downsample(image, dl_factor):
-    return image[0:image.shape[0]:dl_factor, 0:image.shape[1]:dl_factor]
-
-
 def convert_sparse_torch(mat):
+    """
+    Converts a sparse torch tensor to float
+    """
     values = mat.data
     coo_data = mat.tocoo()
     indices = torch.LongTensor([coo_data.row,coo_data.col])
@@ -21,6 +20,13 @@ class Project2D(object):
     Class for projecting 2D signals into 1D signals
     """
     def __init__(self, img_sz_x, img_sz_y, angle_disc, proj_size):
+        """
+        Initialization for the projector class
+        :param img_sz_x: width of the image
+        :param img_sz_y: height of the image
+        :param angle_disc: number of bins (discretizations) for the angles
+        :param proj_size: the length of the projection line (usually the same as the image size)
+        """
         self.angle_disc = angle_disc
         self.proj_size = proj_size
         angles = np.linspace(0, angle_disc-1, angle_disc)
@@ -35,7 +41,14 @@ class Project2D(object):
         self.W = W
         self.W_tensor = convert_sparse_torch(self.W).to_dense()
 
-    def forward(self, image, angle_index, adjoint=False, is_cuda=True, tilt_series=False, wedge_sz=6):
+    def forward(self, image, angle_index):
+        """
+        Applies the projection operator based on the given angle indices
+        :param image: the image to be projected
+        :param angle_index: angle indices
+        :param is_cuda: final results and tensors put on gpu device or not
+        :return: the projection lines
+        """
         batch_size = len(angle_index)
 
         angle_index = np.expand_dims((angle_index), axis=1) * self.proj_size + np.linspace(0, self.proj_size-1, self.proj_size)

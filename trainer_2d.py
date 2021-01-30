@@ -19,16 +19,10 @@ from torch.autograd import Variable
 
 
 class Trainer(TrainerAbstract):
-    def train_epoch(self, x_true, proj_true, adj):
+    def train_epoch(self):
         """
         Trains the discriminator and reconstructs the signal
-        :param x_true: the gt signal, only used for comparison with the recon signal
-        :param p_true: the gt pdf, only used for comparison with the recon pdf
-        :return: nothing is returned
         """
-        self.args.angle_disc_orig = self.args.angle_disc
-        self.args.lrate_pdf_bu = self.args.lrate_pdf
-        self.args.lrate_x_bu = self.args.lrate_x
         for epoch in range(self.args.num_epoch):
             # updating the discriminator
             # deactivate the gradient for the signal here
@@ -138,9 +132,8 @@ class Trainer(TrainerAbstract):
                     self.scheduler_x.step()
                     
                     # compute the SSIM and MS-SSIM between the orig and updated image
-                    ssim_val = ssim(self.x.relu(self.x.image).unsqueeze(0).unsqueeze(1).detach().cpu(), x_true.squeeze().unsqueeze(0).unsqueeze(1).cpu(), data_range=1, size_average=True)
-                    #ms_ssim_val = ms_ssim((self.x.protein).unsqueeze(0).unsqueeze(1).detach().cpu(), x_true.squeeze().unsqueeze(0).unsqueeze(1).cpu(), data_range=1, size_average=True)
-                    
+                    ssim_val = ssim(self.x.relu(self.x.image).unsqueeze(0).unsqueeze(1).detach().cpu(), self.image_true.squeeze().unsqueeze(0).unsqueeze(1).cpu(), data_range=1, size_average=True)
+
                     grad_p = 0.
                     if not self.args.pdf_known and not self.args.fixed_pdf:
                         #grad_p = torch.autograd.grad(loss_x, self.p)[0] #+ 1e-5 * self.p
@@ -172,7 +165,7 @@ class Trainer(TrainerAbstract):
                         fig , axes = plt.subplots(2, 3)
                     else:
                         fig , axes = plt.subplots(2, 2)
-                    im = axes[0, 0].imshow(x_true.squeeze().cpu().numpy())
+                    im = axes[0, 0].imshow(self.image_true.squeeze().cpu().numpy())
                     if self.args.image_file=='point':
                         points = (self.x.sigmoid(self.x.image)-0.5)*2.
                         image = gauss2D_image(points[:, 0], points[:, 1], self.args.res_val, self.args.pixel_size, self.args.g_std)
@@ -221,7 +214,7 @@ class Trainer(TrainerAbstract):
                     if self.iteration==0:
                         savedict = {}
                     savedict[str(self.iteration)] = {}
-                    savedict[str(self.iteration)]['image_gt'] = x_true.squeeze().cpu().numpy()
+                    savedict[str(self.iteration)]['image_gt'] = self.image_true.squeeze().cpu().numpy()
                     savedict[str(self.iteration)]['image_recon'] = self.x.image.detach().cpu().numpy()
                     if not self.args.pdf_known:
                         savedict[str(self.iteration)]['pdf_est'] = self.pdf.detach().cpu().numpy()

@@ -57,9 +57,9 @@ class TrainerAbstract(object):
         :param image_true: the ground truth image (used for comparison only)
         """
         self.args = args
+        self.image_true = image_true
         self.Softmax = torch.nn.Softmax(dim=0)
         self.dataloader = dataloader
-        self.image_true = image_true
         self.x = ImageClass(args, image_sz, proj_obj)
         if self.args.use_gpu:
             self.net = net.cuda()

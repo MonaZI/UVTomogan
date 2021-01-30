@@ -17,7 +17,13 @@ from utils import *
 
 
 class ImageClass(nn.Module):
-    def __init__(self, args, image_sz, proj_obj, image_true):
+    def __init__(self, args, image_sz, proj_obj):
+        """
+        Initialing the image class
+        :param args: the set of experiment arguments
+        :param image_sz: the size of the image (int)
+        :param proj_obj: the projector object
+        """
         super().__init__()
         self.args = args
         self.sigmoid = nn.Sigmoid()
@@ -47,11 +53,12 @@ class TrainerAbstract(object):
         """
         self.args = args
         self.dataloader = dataloader
+        self.image_true = image_true
         if self.args.use_gpu:
             self.net = net.cuda()
         self.logger_tf = SummaryWriter(log_dir=os.path.join(self.args.log_path, self.args.exp_name))
 
-        self.x = ImageClass(args, image_sz, proj_obj, image_true).cuda()
+        self.x = ImageClass(args, image_sz, proj_obj).cuda()
         if not self.args.pdf_known:
             # definition of pdf
             self.Softmax = torch.nn.Softmax(dim=0)
@@ -80,14 +87,14 @@ class TrainerAbstract(object):
             self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optim_net, self.args.iter_change_lr, eta_min=5e-4)
         self.iteration = 0
 
-    def train(self, x_true, projs, adj):
+    def train(self):
         """
         Trains and saves the trained model
         :param x_true: the gt signal, only used for comparison with the recon signal
         :param p_true: the gt pdf, only used for comparison with the recon pdf
         :return: nothing is returned
         """
-        self.train_epoch(x_true, projs, adj)
+        self.train_epoch()
         print('Finished training!')
         torch.save(self.net.state_dict(), os.path.join(self.args.modelSavePath, self.args.expName))
         return self.x.detach().cpu().numpy()

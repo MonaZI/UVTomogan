@@ -92,7 +92,7 @@ def main(args):
     print(net)
 
     trainer = Trainer(net, dataloader, image.shape[0], args, proj_obj, image)
-    trainer.train(image, projs, image)
+    trainer.train()
 
 
 if __name__=='__main__':

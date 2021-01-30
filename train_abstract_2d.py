@@ -37,7 +37,7 @@ class ImageClass(nn.Module):
         self.proj_obj = proj_obj
     def forward(self, angles_index):
         image = self.relu(self.image)
-        syn_meas_clean = self.proj_obj.forward(image, angles_index, tilt_series=self.args.tilt_series, wedge_sz=self.args.wedge_sz).float().cuda()
+        syn_meas_clean = self.proj_obj.forward(image, angles_index).float().cuda()
         syn_meas_noisy = syn_meas_clean + self.args.sigma * torch.randn(syn_meas_clean.shape).float().cuda()
         return syn_meas_clean, syn_meas_noisy
 
@@ -54,11 +54,12 @@ class TrainerAbstract(object):
         self.args = args
         self.dataloader = dataloader
         self.image_true = image_true
+        self.x = ImageClass(args, image_sz, proj_obj)
         if self.args.use_gpu:
             self.net = net.cuda()
+            self.x = self.x.cuda()
         self.logger_tf = SummaryWriter(log_dir=os.path.join(self.args.log_path, self.args.exp_name))
 
-        self.x = ImageClass(args, image_sz, proj_obj).cuda()
         if not self.args.pdf_known:
             # definition of pdf
             self.Softmax = torch.nn.Softmax(dim=0)
@@ -116,6 +117,6 @@ class TrainerAbstract(object):
         self.logger_tf.add_histogram('grad_x', self.x.image.grad.data.cpu().numpy(), self.iteration)
         self.logger_tf.add_histogram('x_values', self.x.image.data.cpu().numpy(), self.iteration)
 
-        if not self.args.pdf_known:
+        if not self.args.pdf_known and not self.args.fixed_pdf:
             self.logger_tf.add_histogram('grad_p', grad_p.data.cpu().numpy(), self.iteration)
             self.logger_tf.add_histogram('p_values', self.p.data.cpu().numpy(), self.iteration)

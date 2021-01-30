@@ -41,7 +41,7 @@ class Project2D(object):
         self.W = W
         self.W_tensor = convert_sparse_torch(self.W).to_dense()
 
-    def forward(self, image, angle_index):
+    def forward(self, image, angle_index, is_cuda=True):
         """
         Applies the projection operator based on the given angle indices
         :param image: the image to be projected

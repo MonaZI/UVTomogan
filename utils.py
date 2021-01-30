@@ -5,6 +5,19 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 
+
+def SNR(img1, img2):
+    """
+    Computes SNR between two images
+    :param img1: estimated image
+    :param img2: reference image
+    :return: SNR in dB
+    """
+    res = np.linalg.norm(img2)/np.linalg.norm(img1-img2)
+    res = 20 * np.log10(res)
+    return res
+
+
 def downsample(image, dl_factor):
     """
     Downsamples image by the given dl_factor

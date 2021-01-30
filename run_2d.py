@@ -59,7 +59,7 @@ def main(args):
         temp[k] = np.sum((angle_indices==k))/args.num_meas
     pdf = temp
     args.pdf_vec = pdf
-    projs_clean = proj_obj.forward(image, angle_indices, is_cuda=False, tilt_series=args.tilt_series, wedge_sz=args.wedge_sz)
+    projs_clean = proj_obj.forward(image, angle_indices, is_cuda=False)
     projs_clean = projs_clean.cpu().numpy()
     image /= projs_clean.max()
     projs_clean /= projs_clean.max()
@@ -98,5 +98,4 @@ def main(args):
 if __name__=='__main__':
     args = arg_parse()
     args = read_yaml(args.config_gen, args.config_exp)
-    # convert dictionary into attributes
     main(args)

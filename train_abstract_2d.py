@@ -96,7 +96,7 @@ class TrainerAbstract(object):
     def train_epoch(self, x_true):
         pass
 
-    def log(self):
+    def log(self, grad_p=None):
         """
         Logs the current status of the model on val and test splits
         :return: Nothing
@@ -110,5 +110,5 @@ class TrainerAbstract(object):
         self.logger_tf.add_histogram('x_values', self.x.image.data.cpu().numpy(), self.iteration)
 
         if not self.args.pdf_known:
-            self.logger_tf.add_histogram('grad_p', self.p.grad.data.cpu().numpy(), self.iteration)
+            self.logger_tf.add_histogram('grad_p', grad_p.data.cpu().numpy(), self.iteration)
             self.logger_tf.add_histogram('p_values', self.p.data.cpu().numpy(), self.iteration)

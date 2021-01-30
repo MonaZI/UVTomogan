@@ -125,8 +125,8 @@ class Trainer(TrainerAbstract):
                         reg_pdf = self.args.wdecay_pdf * torch.mean(self.pdf**2)
                         tv_pdf = self.args.tv_pdf * tv_loss_pdf(self.pdf)
                     
-                    reg_x = self.args.tv_weight * tv_loss(self.x.protein)
-                    print('TV=%f, tv_pdf=%f, max_protein=%f, min_protein=%f' %(reg_x, tv_pdf, self.x.protein.max(), self.x.protein.min()))
+                    reg_x = self.args.tv_weight * tv_loss(self.x.image)
+                    print('TV=%f, tv_pdf=%f, max_protein=%f, min_protein=%f' %(reg_x, tv_pdf, self.x.image.max(), self.x.image.min()))
                     loss_x += (reg_x + reg_pdf + tv_pdf)
                     self.optim_x.zero_grad()
                     #self.p.register_hook(print)
@@ -138,12 +138,11 @@ class Trainer(TrainerAbstract):
                     self.scheduler_x.step()
                     
                     # compute the SSIM and MS-SSIM between the orig and updated image
-                    ssim_val = ssim(self.x.relu(self.x.protein).unsqueeze(0).unsqueeze(1).detach().cpu(), x_true.squeeze().unsqueeze(0).unsqueeze(1).cpu(), data_range=1, size_average=True)
+                    ssim_val = ssim(self.x.relu(self.x.image).unsqueeze(0).unsqueeze(1).detach().cpu(), x_true.squeeze().unsqueeze(0).unsqueeze(1).cpu(), data_range=1, size_average=True)
                     #ms_ssim_val = ms_ssim((self.x.protein).unsqueeze(0).unsqueeze(1).detach().cpu(), x_true.squeeze().unsqueeze(0).unsqueeze(1).cpu(), data_range=1, size_average=True)
                     
                     grad_p = 0.
                     if not self.args.pdf_known and not self.args.fixed_pdf:
-                        #import pdb; pdb.set_trace()
                         #grad_p = torch.autograd.grad(loss_x, self.p)[0] #+ 1e-5 * self.p
                         grad_p = self.p.grad
                         grad_p = grad_p / torch.norm(grad_p)
@@ -167,18 +166,18 @@ class Trainer(TrainerAbstract):
                     else:
                         print('epoch=%d, iter=%d, loss_x=%f, loss_net=%f, grad_p=%f' %(epoch, self.iteration, loss_x.detach().cpu().numpy().item(), loss.detach().cpu().numpy().item(), grad_p.max().cpu().numpy()))
 
-                if (self.iteration%self.args.iter_log==0) and (self.iteration>0):
-                    self.log()
+                if (self.iteration%self.args.iter_log==0)  and (self.iteration>0):
+                    self.log(grad_p=grad_p)
                     if not self.args.pdf_known:
                         fig , axes = plt.subplots(2, 3)
                     else:
                         fig , axes = plt.subplots(2, 2)
                     im = axes[0, 0].imshow(x_true.squeeze().cpu().numpy())
                     if self.args.image_file=='point':
-                        points = (self.x.sigmoid(self.x.protein)-0.5)*2.
+                        points = (self.x.sigmoid(self.x.image)-0.5)*2.
                         image = gauss2D_image(points[:, 0], points[:, 1], self.args.res_val, self.args.pixel_size, self.args.g_std)
                     else:
-                        image = self.x.relu(self.x.protein) #self.x.relu(self.x.protein)
+                        image = self.x.relu(self.x.image) #self.x.relu(self.x.protein)
                     axes[0, 1].imshow((image).data.squeeze().cpu().numpy())
                     axes[0, 1].set_title('ssim={0:1.2f}'.format(ssim_val.numpy()))
                     if self.args.tilt_series:
@@ -223,7 +222,7 @@ class Trainer(TrainerAbstract):
                         savedict = {}
                     savedict[str(self.iteration)] = {}
                     savedict[str(self.iteration)]['image_gt'] = x_true.squeeze().cpu().numpy()
-                    savedict[str(self.iteration)]['image_recon'] = self.x.protein.detach().cpu().numpy()
+                    savedict[str(self.iteration)]['image_recon'] = self.x.image.detach().cpu().numpy()
                     if not self.args.pdf_known:
                         savedict[str(self.iteration)]['pdf_est'] = self.pdf.detach().cpu().numpy()
                     savedict[str(self.iteration)]['pdf_gt'] = self.args.pdf_vec

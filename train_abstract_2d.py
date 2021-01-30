@@ -15,44 +15,22 @@ from torch.utils.tensorboard import SummaryWriter
 from projection_2d_1d import *
 from utils import *
 
-def gaussian_blob(sz, sigma, mu):
-    x, y = np.meshgrid(np.linspace(-1,1,sz), np.linspace(-1,1,sz))
-    d = np.sqrt(x*x+y*y)
-    image = np.exp(-( (d-mu)**2 / ( 2.0 * sigma**2  )  ) )
-    return image
 
-
-class Proteiner(nn.Module):
-    def __init__(self, args, image_sz, proj_obj, image_true, if_theta_dist=False):
+class ImageClass(nn.Module):
+    def __init__(self, args, image_sz, proj_obj, image_true):
         super().__init__()
         self.args = args
         self.sigmoid = nn.Sigmoid()
         self.relu = nn.ReLU()
         if self.args.init=='zeros':
-            if self.args.image_file=='point':
-                init = torch.zeros((args.num_point, 2))
-            else:
-                init = torch.zeros((image_sz, image_sz))
+            init = torch.zeros((image_sz, image_sz))
         elif self.args.init=='rand':
-            if self.args.image_file=='point':
-                init = torch.rand((args.num_point, 2))
-            else:
-                init = torch.rand((image_sz, image_sz))*0.1 #*0.1
-        elif self.args.init=='gauss':
-            init = gaussian_blob(image_sz, 0.5, 0).float()
-        elif self.args.init=='gt':
-            init = image_true.data
+            init = torch.rand((image_sz, image_sz))*0.1 #*0.1
 
-        self.protein = nn.Parameter(init, requires_grad=True)
+        self.image = nn.Parameter(init, requires_grad=True)
         self.proj_obj = proj_obj
     def forward(self, angles_index):
-        # weights = self.sigmoid(self.protein)
-        if self.args.image_file=='point':
-            points = (self.sigmoid(self.protein)-0.5)*2
-            image = gauss2D_image(points[:, 0], points[:, 1], self.args.res_val, self.args.pixel_size, self.args.g_std)
-            image /= self.args.scale_pixel
-        else:
-            image = self.relu(self.protein) #self.relu(self.protein)
+        image = self.relu(self.image)
         syn_meas_clean = self.proj_obj.forward(image, angles_index, tilt_series=self.args.tilt_series, wedge_sz=self.args.wedge_sz).float().cuda()
         syn_meas_noisy = syn_meas_clean + self.args.sigma * torch.randn(syn_meas_clean.shape).float().cuda()
         return syn_meas_clean, syn_meas_noisy
@@ -73,7 +51,7 @@ class TrainerAbstract(object):
             self.net = net.cuda()
         self.logger_tf = SummaryWriter(log_dir=os.path.join(self.args.log_path, self.args.exp_name))
 
-        self.x = Proteiner(args, image_sz, proj_obj, image_true).cuda()
+        self.x = ImageClass(args, image_sz, proj_obj, image_true).cuda()
         if not self.args.pdf_known:
             # definition of pdf
             self.Softmax = torch.nn.Softmax(dim=0)
@@ -101,7 +79,6 @@ class TrainerAbstract(object):
         elif self.args.scheduler=='cosine':
             self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optim_net, self.args.iter_change_lr, eta_min=5e-4)
         self.iteration = 0
-        self.grid_index = 0
 
     def train(self, x_true, projs, adj):
         """
@@ -129,5 +106,9 @@ class TrainerAbstract(object):
             self.logger_tf.add_histogram(tag, value.data.cpu().numpy(), self.iteration)
             self.logger_tf.add_histogram(tag + '/grad', value.grad.data.cpu().numpy(), self.iteration)
 
-        self.logger_tf.add_histogram('grad_x', self.x.protein.grad.data.cpu().numpy(), self.iteration)
-        self.logger_tf.add_histogram('x_values', self.x.protein.data.cpu().numpy(), self.iteration)
+        self.logger_tf.add_histogram('grad_x', self.x.image.grad.data.cpu().numpy(), self.iteration)
+        self.logger_tf.add_histogram('x_values', self.x.image.data.cpu().numpy(), self.iteration)
+
+        if not self.args.pdf_known:
+            self.logger_tf.add_histogram('grad_p', self.p.grad.data.cpu().numpy(), self.iteration)
+            self.logger_tf.add_histogram('p_values', self.p.data.cpu().numpy(), self.iteration)

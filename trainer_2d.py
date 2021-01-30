@@ -34,20 +34,6 @@ class Trainer(TrainerAbstract):
             # deactivate the gradient for the signal here
             for iter, real_meas in enumerate(self.dataloader):
                 real_meas = real_meas.cuda()
-                if (self.args.change_grid) and (self.grid_index<len(self.args.change_angle_disc)) and (self.iteration==self.args.change_angle_disc[self.grid_index]):
-                    #import pdb; pdb.set_trace()
-                    self.args.angle_disc = self.args.angle_disc_vec[self.grid_index] 
-                    self.grid_index += 1
-                    # repopulate the new p on the new grid
-                    if self.iteration==0:
-                        self.p = torch.zeros((self.args.angle_disc,))
-                    else:
-                        self.p = repopulate_p(self.p, self.args.angle_disc)
-                    self.pdf = self.Softmax(self.p)
-                    # reset the learning rate of the pdf and the signal
-                    self.args.lrate_pdf = self.args.lrate_pdf_bu
-                    for g in self.optim_x.param_groups:
-                        g['lr'] = self.args.lrate_x_bu
 
                 for param in self.x.parameters():
                     param.requires_grad = False

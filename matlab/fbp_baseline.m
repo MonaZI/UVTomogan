@@ -9,14 +9,14 @@ V_init = zeros(proj_size^2, 1);
 sz = [length(V_init),1];
 N = sqrt(length(V_init));
 % weights for body noise
-%lamb =[8e1, 1e0];
-%rho_n = [8e2, 1e1];
+lamb =[8e1, 1e0];
+rho_n = [8e2, 1e1];
 % weights for phantom no noise
 % lamb = [8e1, 1e1];
 % rho_n = [8e2, 1e2];
 % no noise
-lamb =[4e0, 5e0];
-rho_n = [4e0, 5e0];
+%lamb =[4e0, 5e0];
+%rho_n = [4e0, 5e0];
 
 G = LinOpGrad([N, N]);
 reshape_op = LinOpShape([N^2, 1], [N, N]);

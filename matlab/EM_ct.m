@@ -56,7 +56,7 @@ for iter=1:max_iter
             
             for i = 1:L
                 temp = bsxfun(@minus,tmp,proj(:,i));
-                nom = p_theta.*exp(-sum(temp.^2,1)/(2*2*sigma^2));
+                nom = p_theta.*exp(-sum(temp.^2,1)/(2*5*sigma^2));
                 r(i,:) = nom/sum(nom);
             end
         end  
@@ -64,50 +64,50 @@ for iter=1:max_iter
         turn_im = 1;
     end
     
-    % perform M-step-------------------------------------------------------
+    % perform M-step
     if turn_im==1
-    mat = zeros(length(V_init),length(V_init));
-    vec = zeros(length(V_init),1);
-    p_tmp = sum(r,1);
-    
-    for theta_ind = 1:length(theta_disc)
-        angle_index = (theta_ind-1) * proj_len + [0:1:proj_len-1];
-        angle_index = angle_index(:)+1;
-        temp_mat = rdn_mtx_x(angle_index, :);
+        mat = zeros(length(V_init),length(V_init));
+        vec = zeros(length(V_init),1);
+        p_tmp = sum(r,1);
         
-        tmp = bsxfun(@times,temp_mat.'*proj,r(:,theta_ind).');
-        tt = (temp_mat.')*temp_mat;
-        mat = mat + p_tmp(theta_ind)*tt;
-        vec = vec + sum(tmp,2);
-    end
-    
-    % construct the optimization env
-    mtx = LinOpMatrix(mat);
-    
-    LS=CostL2([],vec);        % Least-Squares data term
-    F=LS*mtx;
-    Fn = {lamb(1)*R_pos,lamb(2)*Reg};
-    ADMM = OptiADMM(F,Fn,Hn,rho_n);
-    ADMM.ItUpOut=1;           % call OutputOpti update every ItUpOut iterations
-    ADMM.maxiter=6;           % max number of iterations
-    ADMM.run(V_init);         % run the algorithm
-    
-    error(iter) = norm(V_init(:)-ADMM.OutOp.evolxopt{end}(:),'fro');
-    fprintf('error = %f \n',error(iter))
-    
-    V_init = ADMM.OutOp.evolxopt{end};
-    rec_img(:,:,iter) = reshape(V_init,[N,N]).';
-%     save(['./temp/imgs_body_noise_zeros.mat'], 'rec_img')
-    
-    if iter==24
-        for j=1:24
-            subplot(3, 8, j); 
-            imagesc(rec_img(:,:,j));
-            colormap gray
+        for theta_ind = 1:length(theta_disc)
+            angle_index = (theta_ind-1) * proj_len + [0:1:proj_len-1];
+            angle_index = angle_index(:)+1;
+            temp_mat = rdn_mtx_x(angle_index, :);
+            
+            tmp = bsxfun(@times,temp_mat.'*proj,r(:,theta_ind).');
+            tt = (temp_mat.')*temp_mat;
+            mat = mat + p_tmp(theta_ind)*tt;
+            vec = vec + sum(tmp,2);
         end
-    end   
-    turn_angle=1;
-    turn_im=0;
+        
+        % construct the optimization env
+        mtx = LinOpMatrix(mat);
+        
+        LS=CostL2([],vec);        % Least-Squares data term
+        F=LS*mtx;
+        Fn = {lamb(1)*R_pos,lamb(2)*Reg};
+        ADMM = OptiADMM(F,Fn,Hn,rho_n);
+        ADMM.ItUpOut=1;           % call OutputOpti update every ItUpOut iterations
+        ADMM.maxiter=6;           % max number of iterations
+        ADMM.run(V_init);         % run the algorithm
+        
+        error(iter) = norm(V_init(:)-ADMM.OutOp.evolxopt{end}(:),'fro');
+        fprintf('iter=%d/%d, error=%f \n', iter, max_iter, error(iter))
+        
+        V_init = ADMM.OutOp.evolxopt{end};
+        rec_img(:,:,iter) = reshape(V_init,[N,N]).';
+        save(['temp.mat'], 'rec_img')
+        
+        if iter==24
+            for j=1:24
+                subplot(3, 8, j); 
+                imagesc(rec_img(:,:,j));
+                colormap gray
+            end
+        end   
+        turn_angle=1;
+        turn_im=0;
     end
 end
 

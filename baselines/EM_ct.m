@@ -15,8 +15,6 @@ max_iter = 30;
 error = zeros(max_iter,1);
 
 % optimization
-% no wedge
-% these values work for both body1 and phantom random init, clean case
 if random_init
     % phantom clean and noisy
     lamb =[4e5, 5e7];
@@ -37,12 +35,6 @@ else
     %rho_n = [8e0, 5e5]; %5e5
 end
 
-% body snr=inf
-% works for noisy cases
-
-%lamb =[4e1, 1e-3];
-%rho_n = [4e1, 1e-3];
-
 G = LinOpGrad([N, N]);
 tt = LinOpShape([N^2, 1], [N, N]);
 G = G*tt;
@@ -50,7 +42,6 @@ Reg = CostL1(G.sizeout,zeros(G.sizeout));
 Hn = {LinOpIdentity(sz), G};
 R_pos = CostNonNeg(sz);
 
-%% precomputations
 r = ones(L, length(theta_disc))/length(theta_disc);
 
 turn_angle = ~turn_im;
@@ -63,7 +54,6 @@ for iter=1:max_iter
             tmp = reshape(tmp,[proj_len, length(theta_disc)]);        
             tmp_norm = sqrt(sum(tmp.^2, 1));
             tmp = bsxfun(@rdivide, tmp, tmp_norm);
-            %sqrt(sum(tmp.^2, 1))
             for i = 1:L
                 temp = bsxfun(@times,tmp,proj(:,i));
                 temp = sum(temp,1);
@@ -108,14 +98,14 @@ for iter=1:max_iter
         
         % construct the optimization env
         mtx = LinOpMatrix(mat);
-        norm(mat*V_init-vec)
+        % norm(mat*V_init - vec)
         
-        LS=CostL2([],vec);        % Least-Squares data term
+        LS=CostL2([], vec);        % Least-Squares data term
         F=LS*mtx;
-        Fn = {lamb(1)*R_pos,lamb(2)*Reg};
-        ADMM = OptiADMM(F,Fn,Hn,rho_n);
-        ADMM.ItUpOut=1;           % call OutputOpti update every ItUpOut iterations
-        ADMM.maxiter=6;           % max number of iterations
+        Fn = {lamb(1)*R_pos, lamb(2)*Reg};
+        ADMM = OptiADMM(F, Fn, Hn, rho_n);
+        ADMM.ItUpOut = 1;           % call OutputOpti update every ItUpOut iterations
+        ADMM.maxiter = 6;           % max number of iterations
         ADMM.run(V_init);         % run the algorithm
         
         error(iter) = norm(V_init(:)-ADMM.OutOp.evolxopt{end}(:),'fro');
@@ -123,15 +113,15 @@ for iter=1:max_iter
         
         V_init = ADMM.OutOp.evolxopt{end};
         rec_img(:,:,iter) = reshape(V_init,[N,N]).';
-        save(['temp.mat'], 'rec_img')
+        %save(['temp.mat'], 'rec_img')
         
-        if iter==24
-            for j=1:24
-                subplot(3, 8, j); 
-                imagesc(rec_img(:,:,j));
-                colormap gray
-            end
-        end   
+        %if iter==24
+        %    for j=1:24
+        %        subplot(3, 8, j); 
+        %        imagesc(rec_img(:,:,j));
+        %        colormap gray
+        %    end
+        %end   
         turn_angle=1;
         turn_im=0;
     end

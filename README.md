@@ -9,6 +9,7 @@ by Mona Zehni, Zhizhen Zhao
 ## Prerequisites
 - Astra toolbox (https://www.astra-toolbox.com/)
 - Pytorch, Numpy, Matplotlib, pyyaml
+- Optional: GlobalBioIm, used for the baselines.
 
 ## More Information
 If you find this repositry helpful in your publications, please consider citing our paper:

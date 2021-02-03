@@ -1,4 +1,4 @@
-function [rec_img, rec_pdf] = EM_ct(V_init, proj, theta_disc, rdn_mtx_x, sigma, turn_im)
+function rec_img = EM_ct(V_init, proj, theta_disc, rdn_mtx_x, sigma, turn_im, random_init)
 % EM for the tomographic reconstruction problem
 % V_init: initial image
 % proj: the projection lines
@@ -10,16 +10,38 @@ proj_len = size(proj, 1);
 L = size(proj,2);
 sz = [length(V_init),1];
 N = sqrt(length(V_init));
+% for good init, one can set max_iter to be smalller
 max_iter = 30;
 error = zeros(max_iter,1);
 
 % optimization
 % no wedge
-%lamb =[4e4, 5e6];
-%rho_n = [4e4, 5e6];
+% these values work for both body1 and phantom random init, clean case
+if random_init
+    % phantom clean and noisy
+    lamb =[4e5, 5e7];
+    rho_n = [4e5, 5e7];
+    % lung clean and noisy
+    %lamb = [4e4, 5e6];
+    %rho_n = [4e4, 5e6];
+else
+    % clean phantom and lung
+    lamb =[4e0, 1e0];
+    rho_n = [4e1, 5e1];
+    % noisy lung
+    %lamb =[4e4, 1e5]; %1e4
+    %rho_n = [4e4, 5e6]; %5e5
+
+    % noisy phantom
+    %lamb =[4e0, 1e4]; %1e4
+    %rho_n = [8e0, 5e5]; %5e5
+end
+
 % body snr=inf
-lamb =[4e0, 1e0]; %1e4
-rho_n = [4e1, 5e1]; %5e5
+% works for noisy cases
+
+%lamb =[4e1, 1e-3];
+%rho_n = [4e1, 1e-3];
 
 G = LinOpGrad([N, N]);
 tt = LinOpShape([N^2, 1], [N, N]);
@@ -56,7 +78,10 @@ for iter=1:max_iter
             
             for i = 1:L
                 temp = bsxfun(@minus,tmp,proj(:,i));
-                nom = p_theta.*exp(-sum(temp.^2,1)/(2*5*sigma^2));
+                % for other noisy experiments 
+                % nom = p_theta.*exp(-sum(temp.^2,1)/(2*1*sigma^2));
+                % for random noisy experiment for lung
+                nom = p_theta.*exp(-sum(temp.^2,1)/(2*2.*sigma^2));
                 r(i,:) = nom/sum(nom);
             end
         end  
@@ -83,6 +108,7 @@ for iter=1:max_iter
         
         % construct the optimization env
         mtx = LinOpMatrix(mat);
+        norm(mat*V_init-vec)
         
         LS=CostL2([],vec);        % Least-Squares data term
         F=LS*mtx;

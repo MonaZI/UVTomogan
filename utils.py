@@ -78,7 +78,7 @@ def angle_pdf_samples(pdf, num_meas, angle_disc, pdf_type='uniform'):
     indices = torch.zeros((num_meas,))
     cumsum = np.cumsum(pdf)
     for i in range(num_meas):
-        s = np.random.rand(1)
+        s = np.random.rand(1)-1e-5
         t = int(np.sum((cumsum<s)))
         indices[i] = t
     return indices

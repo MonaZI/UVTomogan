@@ -22,19 +22,19 @@ scheduler: 'step'
 # initialization of the signal
 init: 'rand'
 n_disc: 4
-lrate: 0.001 # increased the lrates by a factor of 10
-lrate_x: 0.001
-lrate_pdf: 0.0002
+lrate: 0.01 # 0.001 # increased the lrates by a factor of 10
+lrate_x: 0.01 # 0.001
+lrate_pdf: 0.0002 # 0.0002
 start_pdf: 0
 wdecay: 0.
-wdecay_x: 0.01
+wdecay_x: 0.0005 #first spectral 0.001, first setting: 0.01
 wdecay_pdf: 0.04 #0.01
 iter_change_lr: 10000 #30k
 iter_change_lr_x: 10000 #30k
 gamma: 0.9
 gamma_x: 0.9
 lamb: 0.00001
-tv_weight: 0.01
+tv_weight: 0.0005 # first spectral: 0.001, first setting: 0.01
 tv_pdf: 0.01 #0
 
 

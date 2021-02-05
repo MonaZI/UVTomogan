@@ -5,8 +5,6 @@ import numpy as np
 import matplotlib
 import scipy.io
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
-from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
 
 from train_abstract_2d import TrainerAbstract
 from utils import *

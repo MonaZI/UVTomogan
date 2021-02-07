@@ -13,6 +13,7 @@ by Mona Zehni, Zhizhen Zhao
 
 ## Run
 The config files for different experiments are located in ```./configs/```.
+
 Pass the general and experiment's config file as:
 
 ```python run_2d.py -config_gen ./configs/config_gen.yaml -config_exp ./configs/config_phantom_known_clean.yaml``` 

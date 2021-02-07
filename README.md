@@ -19,6 +19,6 @@ Pass the general and experiment's config file as:
 ```python run_2d.py -config_gen ./configs/config_gen.yaml -config_exp ./configs/config_phantom_known_clean.yaml``` 
 
 ## More Information
-If you find this repositry helpful in your publications, please consider citing our paper:
+If you find this repositry helpful in your publications, please consider citing our paper.
 
 If you have any questions, please contact Mona Zehni (mzehni2@illinois.edu).

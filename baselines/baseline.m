@@ -4,25 +4,19 @@ rng(0)
 
 % load the saved data corresponding to the experiment
 % lung with noise experiment
-%load('/home/mona/projects/2DtomoGAN/tomoGAN/results/exp_body1_64_unknown_wedge0_snr1_EM.mat')
+%load('./data/lung_noise.mat')
+
 % phantom with noise experiment
-%load('/home/mona/projects/2DtomoGAN/tomoGAN/results/exp_phantom_64_unknown_wedge0_snr1_0_n120_test_lowtv_EM.mat')
-%load('/home/mona/projects/2DtomoGAN/tomoGAN/results/exp_phantom_64_known_wedge0_snr0_0_n120_EM.mat')
+load('./data/phantom_noisy.mat')
 
 % phantom no noise experiment
-load('/home/mona/projects/2DtomoGAN/tomoGAN/results/exp_phantom_64_known_wedge0_sigma0_EM.mat')
+%load('./data/phantom_clean.mat')
 
-% body no noise experiment
-%load('/home/mona/projects/2DtomoGAN/tomoGAN/results/exp_body1_64_known_wedge0_sigma0_EM.mat')
+% lung no noise experiment
+%load('./data/lung_clean.mat')
 
-% load('../results/exp_body1_64_unknown_wedge0_snr1_EM.mat')
-
-%load('../results/exp_phantom_64_unknown_wedge0_snr1_comment_EM.mat')
-%load('../results/exp_phantom_64_unknown_wedge0_sigma0_EM.mat')
-sigma
-wedge_sz = 1;
 indices = randi(length(angle_indices), size(projs_clean, 1), 1);
-%indices = randi(length(angle_indices), 1000, 1);
+%indices = randi(length(angle_indices), 1000, 1); % for debugging 
 projs_clean = projs_clean(indices, :, :);
 projs_noisy = projs_noisy(indices, :, :);
 angle_indices = angle_indices(indices);
@@ -45,24 +39,27 @@ error = norm(res.'-projs_clean);
 
 projs_noisy = projs_noisy.';
 
-%fbp_recon = fbp_baseline(projs_noisy, proj_submat);
-%save('fbp_recon_body_noisy.mat', 'fbp_recon')
-% figure; imagesc(fbp_recon); colormap gray;
+fbp_recon = fbp_baseline(projs_noisy, proj_submat);
+save('fbp_recon_phantom_noisy.mat', 'fbp_recon')
 
 % EM good init baseline
 init_vol = imgaussfilt(image, 3);
 init_vol = init_vol.';
 turn_im = 0;
 random_init = false;
-em_recon_good_init = EM_ct(init_vol(:), projs_noisy, theta_disc, proj_mat, sigma, turn_im, random_init);
-%save('em_recon_good_init_noisy_body_new.mat', 'em_recon_good_init')
+max_iter = 20;
+scale_sigma = 1.;
+em_recon_good_init = EM_ct(init_vol(:), projs_noisy, theta_disc, proj_mat, sigma, turn_im, random_init, max_iter, scale_sigma);
+save('em_recon_good_init_noisy_phantom.mat', 'em_recon_good_init')
 
 % EM poor init baseline
 init_vol = rand(size(image)) * 0.001;
 turn_im = 1;
 random_init = true;
-%em_recon_random_init = EM_ct(init_vol(:), projs_noisy, theta_disc, proj_mat, sigma, turn_im, random_init);
-%save('em_recon_random_init_noisy_body.mat', 'em_recon_random_init')
+max_iter = 30;
+scale_sigma = 2.;
+em_recon_random_init = EM_ct(init_vol(:), projs_noisy, theta_disc, proj_mat, sigma, turn_im, random_init, max_iter, scale_sigma);
+save('em_recon_random_init_noisy_phantom.mat', 'em_recon_random_init')
 
 
 

@@ -1,17 +1,17 @@
-function rec_img = EM_ct(V_init, proj, theta_disc, rdn_mtx_x, sigma, turn_im, random_init)
+function rec_img = EM_ct(V_init, proj, theta_disc, rdn_mtx_x, sigma, turn_im, random_init, max_iter, sigma_scale)
 % EM for the tomographic reconstruction problem
 % V_init: initial image
 % proj: the projection lines
 % theta_disc: the discretized projection angles
 % rdn_mtx_x: the projection matrix
 % sigma: std of the noise
+% max_iter: maximum number of iterations
+% sigma_scale: the scale of sigma, used for the E-step
 
 proj_len = size(proj, 1);
 L = size(proj,2);
 sz = [length(V_init),1];
 N = sqrt(length(V_init));
-% for good init, one can set max_iter to be smalller
-max_iter = 30;
 error = zeros(max_iter,1);
 
 % optimization
@@ -19,20 +19,22 @@ if random_init
     % phantom clean and noisy
     lamb =[4e5, 5e7];
     rho_n = [4e5, 5e7];
+
     % lung clean and noisy
     %lamb = [4e4, 5e6];
     %rho_n = [4e4, 5e6];
 else
     % clean phantom and lung
-    lamb =[4e0, 1e0];
-    rho_n = [4e1, 5e1];
+    %lamb =[4e0, 1e0];
+    %rho_n = [4e1, 5e1];
+
     % noisy lung
     %lamb =[4e4, 1e5]; %1e4
     %rho_n = [4e4, 5e6]; %5e5
 
     % noisy phantom
-    %lamb =[4e0, 1e4]; %1e4
-    %rho_n = [8e0, 5e5]; %5e5
+    lamb =[4e0, 1e0]; %1e4
+    rho_n = [8e0, 5e1]; %5e5
 end
 
 G = LinOpGrad([N, N]);
@@ -69,9 +71,9 @@ for iter=1:max_iter
             for i = 1:L
                 temp = bsxfun(@minus,tmp,proj(:,i));
                 % for other noisy experiments 
-                % nom = p_theta.*exp(-sum(temp.^2,1)/(2*1*sigma^2));
-                % for random noisy experiment for lung
-                nom = p_theta.*exp(-sum(temp.^2,1)/(2*2.*sigma^2));
+                nom = p_theta.*exp(-sum(temp.^2,1)/(2*sigma_scale*sigma^2));
+                % for random noisy experiment for lung and phantom
+                %nom = p_theta.*exp(-sum(temp.^2,1)/(2*2.*sigma^2));
                 r(i,:) = nom/sum(nom);
             end
         end  
@@ -100,13 +102,13 @@ for iter=1:max_iter
         mtx = LinOpMatrix(mat);
         % norm(mat*V_init - vec)
         
-        LS=CostL2([], vec);        % Least-Squares data term
-        F=LS*mtx;
-        Fn = {lamb(1)*R_pos, lamb(2)*Reg};
+        LS = CostL2([], vec);
+        F = LS * mtx;
+        Fn = {lamb(1) * R_pos, lamb(2) * Reg};
         ADMM = OptiADMM(F, Fn, Hn, rho_n);
-        ADMM.ItUpOut = 1;           % call OutputOpti update every ItUpOut iterations
-        ADMM.maxiter = 6;           % max number of iterations
-        ADMM.run(V_init);         % run the algorithm
+        ADMM.ItUpOut = 1;
+        ADMM.maxiter = 6;
+        ADMM.run(V_init);
         
         error(iter) = norm(V_init(:)-ADMM.OutOp.evolxopt{end}(:),'fro');
         fprintf('iter=%d/%d, error=%f \n', iter, max_iter, error(iter))
@@ -115,13 +117,6 @@ for iter=1:max_iter
         rec_img(:,:,iter) = reshape(V_init,[N,N]).';
         %save(['temp.mat'], 'rec_img')
         
-        %if iter==24
-        %    for j=1:24
-        %        subplot(3, 8, j); 
-        %        imagesc(rec_img(:,:,j));
-        %        colormap gray
-        %    end
-        %end   
         turn_angle=1;
         turn_im=0;
     end

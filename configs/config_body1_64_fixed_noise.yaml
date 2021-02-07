@@ -1,5 +1,5 @@
 # dataset
-image_file: 'body1'
+image_file: 'body'
 dl_scale: 4
 num_meas: 20000
 angle_disc: 120

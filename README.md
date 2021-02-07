@@ -9,7 +9,7 @@ by Mona Zehni, Zhizhen Zhao
 ## Prerequisites
 - Astra toolbox (https://www.astra-toolbox.com/)
 - Pytorch, Numpy, Matplotlib, pyyaml
-- Optional: GlobalBioIm, used for the baselines.
+- Optional: GlobalBioIm (https://biomedical-imaging-group.github.io/GlobalBioIm/), used for the baselines.
 
 ## Run
 Pass the general and experiment's config file as:

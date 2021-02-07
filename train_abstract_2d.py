@@ -1,4 +1,3 @@
-# the alternating training between the signal and the discriminator network
 import os
 from abc import abstractmethod
 

@@ -30,7 +30,7 @@ class ImageClass(nn.Module):
         if self.args.init=='zeros':
             init = torch.zeros((image_sz, image_sz))
         elif self.args.init=='rand':
-            init = torch.rand((image_sz, image_sz))*0.1 #*0.1
+            init = torch.rand((image_sz, image_sz)) * 0.1
 
         self.image = nn.Parameter(init, requires_grad=True)
         self.proj_obj = proj_obj
@@ -64,17 +64,6 @@ class TrainerAbstract(object):
             self.Softmax = torch.nn.Softmax(dim=0)
             self.p = torch.zeros((self.args.angle_disc,))
             self.pdf = self.Softmax(self.p)
-
-            #alpha1 = torch.rand((2,))-0.5
-            #pdf1 = sig_from_a(alpha1, len(self.p))
-            #pdf1 -= torch.min(pdf1)
-            #pdf1 += 0.001
-            #pdf1 /= torch.sum(pdf1)
-            #self.pdf = pdf1
-            #
-            #kl = torch.sum(pdf1 * torch.log2(pdf1/self.args.pdf_vec))
-            #print(kl)
-            #import pdb; pdb.set_trace()
 
         # generate two different optimizers for the variables and the discriminator network weights
         if self.args.optimizer=='sgd':

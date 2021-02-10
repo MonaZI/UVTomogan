@@ -33,8 +33,9 @@ def main(args):
 
     # load the image
     if args.image_file=='phantom':
-        image = scipy.io.loadmat('/home/mona/projects/lib/astra-toolbox/samples/python/phantom.mat')['phantom256']
-        cv2.imwrite('./data/phantom.png', (image*255.).astype(int))
+        # phantom image can either be loaded from the astra-toolbox or loaded from the saved image in ./data folder
+        # use the path to where astra-toolbox is located
+        image = scipy.io.loadmat('../astra-toolbox/samples/python/phantom.mat')['phantom256']
         image = downsample(image, args.dl_scale)
     else:
         image_sz = int(256/args.dl_scale)

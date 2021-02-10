@@ -109,8 +109,6 @@ class Trainer(TrainerAbstract):
                         #if self.args.sigma>0:
                         #    out = out.view(self.args.batch_size, self.args.angle_disc)
                         loss_x = -1 * torch.mean(angle_probs*out)
-                        #tmp = torch.mean(angle_probs, dim=0).squeeze()
-                        #tmp2 = torch.mean(tmp*out)
                         reg_pdf = self.args.wdecay_pdf * torch.mean(self.pdf**2)
                         tv_pdf = self.args.tv_pdf * tv_loss_pdf(self.pdf)
                     

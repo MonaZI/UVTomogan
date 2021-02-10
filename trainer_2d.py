@@ -109,6 +109,8 @@ class Trainer(TrainerAbstract):
                         #if self.args.sigma>0:
                         #    out = out.view(self.args.batch_size, self.args.angle_disc)
                         loss_x = -1 * torch.mean(angle_probs*out)
+                        #tmp = torch.mean(angle_probs, dim=0).squeeze()
+                        #tmp2 = torch.mean(tmp*out)
                         reg_pdf = self.args.wdecay_pdf * torch.mean(self.pdf**2)
                         tv_pdf = self.args.tv_pdf * tv_loss_pdf(self.pdf)
                     
@@ -189,12 +191,12 @@ class Trainer(TrainerAbstract):
                 if self.iteration%1000==0:
                     if self.iteration==0:
                         savedict = {}
-                    savedict[str(self.iteration)] = {}
-                    savedict[str(self.iteration)]['image_gt'] = self.image_true.squeeze().cpu().numpy()
-                    savedict[str(self.iteration)]['image_recon'] = self.x.image.detach().cpu().numpy()
+                    savedict['iter_' + str(self.iteration)] = {}
+                    savedict['iter_' + str(self.iteration)]['image_gt'] = self.image_true.squeeze().cpu().numpy()
+                    savedict['iter_' + str(self.iteration)]['image_recon'] = self.x.image.detach().cpu().numpy()
                     if not self.args.pdf_known:
-                        savedict[str(self.iteration)]['pdf_est'] = self.pdf.detach().cpu().numpy()
-                    savedict[str(self.iteration)]['pdf_gt'] = self.args.pdf_vec
+                        savedict['iter_' + str(self.iteration)]['pdf_est'] = self.pdf.detach().cpu().numpy()
+                    savedict['iter_' + str(self.iteration)]['pdf_gt'] = self.args.pdf_vec
                     scipy.io.savemat('./results/results_' + self.args.exp_name + '.mat', savedict, do_compression=True)
                 
                 self.iteration += 1

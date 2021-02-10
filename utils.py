@@ -112,16 +112,17 @@ def sig_from_a(a, sig_len):
     :param sig_len: the length of the signal
     :return: the signal (either a torch tensor or a numpy array)
     """
+    # to only have half the period of the signal, change 2. coeff in the sine argument to 1.
     if torch.is_tensor(a):
         t = torch.arange(0., sig_len)
         x = torch.zeros((sig_len, ))
         for count, ak in enumerate(a):
-            x = x + ak * torch.sin((2*np.pi*count*t)/sig_len)
+            x = x + ak * torch.sin((1*np.pi*count*t)/sig_len)
     else:
         t = np.arange(0., sig_len)
         x = np.zeros((sig_len, ))
         for count, ak in enumerate(a):
-            x = x + ak * np.sin((2*np.pi*count*t)/sig_len) # we had a 2 coeff before to make it periodic
+            x = x + ak * np.sin((1.*np.pi*count*t)/sig_len) 
     return x
 
 

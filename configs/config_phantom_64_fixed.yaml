@@ -9,9 +9,6 @@ batch_size: 50 #50
 snr: 'inf'
 pdf_known: False
 a_size: 3 #4
-tilt_series: False
-wedge_sz: 3
-normalize: True
 
 # model
 mid_size: 1024
@@ -25,19 +22,19 @@ scheduler: 'step'
 # initialization of the signal
 init: 'rand'
 n_disc: 4
-lrate: 0.01 #0.001 # increased the lrates by a factor of 10
-lrate_x: 0.01 #0.001
+lrate: 0.001 #spectral 0.01 # increased the lrates by a factor of 10
+lrate_x: 0.001 #spectral 0.01
 lrate_pdf: 0.0002
 wdecay: 0.
-wdecay_x: 0.001 #0.01
+wdecay_x: 0.01 #for spectral 0.001
 wdecay_pdf: 0.04 #0.01
 iter_change_lr: 30000
 iter_change_lr_x: 30000
 gamma: 0.9
 gamma_x: 0.9
 lamb: 0.00001
-tv_weight: 0.001 #0.01
+tv_weight: 0.02 #for spectral 0.001, first time 0.01
 tv_pdf: 0.01 #0
 
 seed: 2
-exp_name: 'exp_phantom_64_fixed_wedge0_sigma0'
+exp_name: 'exp_phantom_fixed_clean2'

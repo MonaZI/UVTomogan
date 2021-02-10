@@ -65,6 +65,17 @@ class TrainerAbstract(object):
             self.p = torch.zeros((self.args.angle_disc,))
             self.pdf = self.Softmax(self.p)
 
+            #alpha1 = torch.rand((2,))-0.5
+            #pdf1 = sig_from_a(alpha1, len(self.p))
+            #pdf1 -= torch.min(pdf1)
+            #pdf1 += 0.001
+            #pdf1 /= torch.sum(pdf1)
+            #self.pdf = pdf1
+            #
+            #kl = torch.sum(pdf1 * torch.log2(pdf1/self.args.pdf_vec))
+            #print(kl)
+            #import pdb; pdb.set_trace()
+
         # generate two different optimizers for the variables and the discriminator network weights
         if self.args.optimizer=='sgd':
             self.optim_x = optim.SGD(self.x.parameters(), lr=self.args.lrate_x, weight_decay=self.args.wdecay_x)

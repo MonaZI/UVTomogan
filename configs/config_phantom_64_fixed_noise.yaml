@@ -7,22 +7,10 @@ pdf: 'nonuniform'
 fixed_pdf: True
 batch_size: 50 #50
 snr: 1 
-pixel_size: 0.08
 pdf_known: False
 a_size: 4 #4
-tilt_series: False
-wedge_sz: 6
-normalize: True
 
 # model
-with_conv: False
-num_channels:
-  - 32
-  - 64
-  - 128
-  - 256
-kernel_size: 3
-num_blocks: 2
 mid_size: 1024
 tau: 0.5
 
@@ -50,17 +38,5 @@ lamb: 0.00001
 tv_weight: 0.02
 tv_pdf: 0.01 #0
 
-change_grid: False
-change_angle_disc:
-    - 0
-    - 100000
-    - 200000
-    - 300000
-angle_disc_vec:
-    - 25
-    - 50
-    - 100
-    - 200
-
 seed: 0
-exp_name: 'exp_phantom_64_fixed_wedge0_snr0_0_n120_test'
+exp_name: 'exp_phantom_fixed_noisy2'

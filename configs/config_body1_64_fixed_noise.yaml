@@ -7,22 +7,10 @@ pdf: 'nonuniform'
 fixed_pdf: True
 batch_size: 50 #50
 snr: 1 #0
-pixel_size: 0.08
 pdf_known: False
 a_size: 2 #4
-tilt_series: False
-wedge_sz: 3
-normalize: True
 
 # model
-with_conv: False
-num_channels:
-  - 32
-  - 64
-  - 128
-  - 256
-kernel_size: 3
-num_blocks: 2
 mid_size: 1024
 tau: 0.5
 
@@ -37,8 +25,6 @@ n_disc: 4
 lrate: 0.001 # increased the lrates by a factor of 10
 lrate_x: 0.001
 lrate_pdf: 0.0002
-lrate_pdf_init: 0.0002
-start_pdf: 0
 wdecay: 0.
 wdecay_x: 0.01
 wdecay_pdf: 0.04 #0.01
@@ -50,17 +36,5 @@ lamb: 0.00001
 tv_weight: 0.01
 tv_pdf: 0.01 #0
 
-change_grid: False
-change_angle_disc:
-    - 0
-    - 100000
-    - 200000
-    - 300000
-angle_disc_vec:
-    - 25
-    - 50
-    - 100
-    - 200
-
 seed: 0
-exp_name: 'exp_body1_64_fixed_wedge0_snr1_a2_seed0_half' #'exp_body1_64_known_wedge0_sigma0'
+exp_name: 'exp_lung_fixed_noisy3' 

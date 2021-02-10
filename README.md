@@ -22,7 +22,16 @@ python run_2d.py -config_gen ./configs/config_gen.yaml -config_exp ./configs/con
 
 ## More Information
 If you find this repositry helpful in your publications, please consider citing our paper.
-
-
-
+```r
+@ARTICLE{UVTomogan,
+       author = {{Zehni}, Mona and {Zhao}, Zhizhen},
+        title = "{UVTomo-GAN: An adversarial learning based approach for unknown view X-ray tomographic reconstruction}",
+      journal = {arXiv e-prints},
+         year = 2021,
+        month = feb,
+        pages = {arXiv:2102.04590},
+       eprint = {2102.04590},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2021arXiv210204590Z},
+}
+```
 If you have any questions, please contact Mona Zehni (mzehni2@illinois.edu).

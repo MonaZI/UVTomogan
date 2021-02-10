@@ -6,6 +6,8 @@ UVTomo-gan: An adversarial learning based approach for unknown view X-ray tomogr
 
 by Mona Zehni, Zhizhen Zhao
 
+Link to paper (arxiv): https://arxiv.org/abs/2102.04590
+
 ## Prerequisites
 - Astra toolbox (https://www.astra-toolbox.com/)
 - Pytorch, Numpy, Matplotlib, pyyaml

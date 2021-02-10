@@ -30,8 +30,6 @@ If you find this repositry helpful in your publications, please consider citing 
          year = 2021,
         month = feb,
         pages = {arXiv:2102.04590},
-       eprint = {2102.04590},
-       adsurl = {https://ui.adsabs.harvard.edu/abs/2021arXiv210204590Z},
-}
+       eprint = {2102.04590}}
 ```
 If you have any questions, please contact Mona Zehni (mzehni2@illinois.edu).

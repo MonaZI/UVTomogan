@@ -60,10 +60,3 @@ max_iter = 30;
 scale_sigma = 2.;
 em_recon_random_init = EM_ct(init_vol(:), projs_noisy, theta_disc, proj_mat, sigma, turn_im, random_init, max_iter, scale_sigma);
 save('em_recon_random_init_noisy_phantom.mat', 'em_recon_random_init')
-
-
-
-
-
-
-

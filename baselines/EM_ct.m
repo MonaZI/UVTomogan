@@ -52,6 +52,7 @@ for iter=1:max_iter
     if turn_angle==1
         if sigma==0
             % when sigma=0, do template matching instead of fuzzy assignment
+            r = zeros(L, length(theta_disc));
             tmp = rdn_mtx_x*V_init;
             tmp = reshape(tmp,[proj_len, length(theta_disc)]);        
             tmp_norm = sqrt(sum(tmp.^2, 1));

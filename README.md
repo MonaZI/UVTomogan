@@ -2,7 +2,7 @@
 
 Implementation for the paper: 
 
-UVTomo-gan: An adversarial learning based approach for unknown view X-ray tomographic reconstruction, accepted in ISBI 2021
+UVTomo-gan: An adversarial learning based approach for unknown view X-ray tomographic reconstruction, published in ISBI 2021
 
 by Mona Zehni, Zhizhen Zhao
 

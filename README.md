@@ -7,6 +7,7 @@ UVTomo-gan: An adversarial learning based approach for unknown view X-ray tomogr
 by Mona Zehni, Zhizhen Zhao
 
 Link to paper: https://ieeexplore.ieee.org/document/9433970
+
 Link to paper (arxiv): https://arxiv.org/abs/2102.04590
 
 ## Prerequisites
